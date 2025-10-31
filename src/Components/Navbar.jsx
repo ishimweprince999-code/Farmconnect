@@ -5,6 +5,7 @@ import {
   HiUser, HiShoppingBag
 } from 'react-icons/hi';
 import { RiPlantLine, RiPriceTag3Line } from 'react-icons/ri';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 // ✅ Complete Translation System
 const translations = {
@@ -14,6 +15,8 @@ const translations = {
       products: 'Products',
       markets: 'Markets',
       updates: 'Updates',
+      trends: 'Price Trends',
+      resources: 'Resources',
       login: 'Sign In',
       signup: 'Get Started',
       profile: 'My Profile',
@@ -25,7 +28,9 @@ const translations = {
         home: 'Dashboard overview',
         products: 'Price information',
         markets: 'Nearby locations',
-        updates: 'Market news'
+        updates: 'Market news',
+        trends: 'Price analysis',
+        resources: 'Farmer guides'
       }
     },
     brand: { 
@@ -54,6 +59,8 @@ const translations = {
       products: 'Ibicuruzwa',
       markets: 'Isoko',
       updates: 'Amakuru',
+      trends: 'Imiterere y\'Ibiciro',
+      resources: 'Ibikoresho',
       login: 'Injira',
       signup: 'Tangira',
       profile: 'Umwirondoro',
@@ -65,7 +72,9 @@ const translations = {
         home: 'Reba ibyerekeye isoko',
         products: 'Amakuru y\'ibiciro',
         markets: 'Isoko ziri hafi',
-        updates: 'Amakuru mashya ku isoko'
+        updates: 'Amakuru mashya ku isoko',
+        trends: 'Gusesengura ibiciro',
+        resources: 'Amabwiriza k\'abahinzi'
       }
     },
     brand: { 
@@ -94,6 +103,8 @@ const translations = {
       products: 'Produits',
       markets: 'Marchés',
       updates: 'Actualités',
+      trends: 'Tendances des Prix',
+      resources: 'Ressources',
       login: 'Connexion',
       signup: 'Commencer',
       profile: 'Mon Profil',
@@ -105,7 +116,9 @@ const translations = {
         home: 'Aperçu du tableau de bord',
         products: 'Informations sur les prix',
         markets: 'Lieux à proximité',
-        updates: 'Nouvelles du marché'
+        updates: 'Nouvelles du marché',
+        trends: 'Analyse des prix',
+        resources: 'Guides agricoles'
       }
     },
     brand: { 
@@ -131,8 +144,6 @@ const translations = {
 };
 
 const Navbar = ({ 
-  currentPage, 
-  setCurrentPage, 
   user, 
   onLogout, 
   language = 'en', 
@@ -142,39 +153,49 @@ const Navbar = ({
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   
+  const navigate = useNavigate();
+  const location = useLocation();
+  const currentPage = location.pathname;
+  
   const t = translations[language] || translations.en;
 
   const navItems = [
     { 
       id: 'home', 
+      path: '/',
       label: t.nav.home, 
       icon: <HiHome className="w-5 h-5" />,
       description: t.nav.description.home
     },
     { 
       id: 'products', 
+      path: '/products',
       label: t.nav.products, 
       icon: <HiShoppingBag className="w-5 h-5" />,
       description: t.nav.description.products
     },
     { 
       id: 'markets', 
+      path: '/markets',
       label: t.nav.markets, 
       icon: <HiMap className="w-5 h-5" />,
       description: t.nav.description.markets
     },
     { 
       id: 'updates', 
+      path: '/updates',
       label: t.nav.updates, 
       icon: <HiNewspaper className="w-5 h-5" />,
       description: t.nav.description.updates
     },
+   
+    
   ];
 
   const userMenuItems = [
-    { id: 'profile', label: t.nav.profile, icon: <HiUserCircle className="w-4 h-4" /> },
-    { id: 'dashboard', label: t.nav.dashboard, icon: <HiChartBar className="w-4 h-4" /> },
-    { id: 'settings', label: t.nav.settings, icon: <HiCog className="w-4 h-4" /> },
+    { id: 'profile', path: '/profile', label: t.nav.profile, icon: <HiUserCircle className="w-4 h-4" /> },
+    { id: 'dashboard', path: '/admin', label: t.nav.dashboard, icon: <HiChartBar className="w-4 h-4" /> },
+    { id: 'settings', path: '/settings', label: t.nav.settings, icon: <HiCog className="w-4 h-4" /> },
   ];
 
   const languageOptions = [
@@ -185,6 +206,24 @@ const Navbar = ({
 
   const currentLanguage = languageOptions.find(lang => lang.code === language);
 
+  const isActivePath = (path) => {
+    if (path === '/') {
+      return currentPage === '/';
+    }
+    return currentPage.startsWith(path);
+  };
+
+  const handleLogout = () => {
+    onLogout();
+    setIsUserMenuOpen(false);
+    navigate('/');
+  };
+
+  const handleNavClick = (path) => {
+    navigate(path);
+    setIsMenuOpen(false);
+  };
+
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -193,7 +232,10 @@ const Navbar = ({
         <div className="flex justify-between items-center py-4">
           
           {/* Logo Section */}
-          <div className="flex items-center space-x-3">
+          <Link 
+            to="/" 
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200"
+          >
             <div className="bg-gradient-to-br from-green-500 to-green-600 text-white p-2 rounded-xl shadow-lg">
               <RiPlantLine className="w-6 h-6" />
             </div>
@@ -201,16 +243,16 @@ const Navbar = ({
               <h1 className="text-xl font-bold text-green-800">{t.brand.name}</h1>
               <p className="text-green-600 text-sm">{t.brand.tagline}</p>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
             {navItems.map((item) => (
-              <button
+              <Link
                 key={item.id}
-                onClick={() => setCurrentPage(item.id)}
+                to={item.path}
                 className={`group relative flex items-center space-x-2 px-4 py-3 rounded-xl transition-all duration-200 ${
-                  currentPage === item.id
+                  isActivePath(item.path)
                     ? 'bg-green-100 text-green-700 border border-green-200 shadow-sm'
                     : 'text-gray-600 hover:text-green-700 hover:bg-gray-50'
                 }`}
@@ -223,7 +265,7 @@ const Navbar = ({
                   {item.description}
                   <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
                 </div>
-              </button>
+              </Link>
             ))}
           </div>
 
@@ -307,21 +349,19 @@ const Navbar = ({
                       <p className="text-xs text-gray-500">{user.email}</p>
                     </div>
                     {userMenuItems.map(item => (
-                      <button
+                      <Link
                         key={item.id}
-                        onClick={() => {
-                          setCurrentPage(item.id);
-                          setIsUserMenuOpen(false);
-                        }}
+                        to={item.path}
+                        onClick={() => setIsUserMenuOpen(false)}
                         className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors duration-200"
                       >
                         {item.icon}
                         <span>{item.label}</span>
-                      </button>
+                      </Link>
                     ))}
                     <div className="border-t border-gray-100 pt-2">
                       <button 
-                        onClick={onLogout}
+                        onClick={handleLogout}
                         className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
                       >
                         <HiUser className="w-4 h-4" />
@@ -333,18 +373,18 @@ const Navbar = ({
               </div>
             ) : (
               <div className="hidden md:flex items-center space-x-3">
-                <button 
-                  onClick={() => setCurrentPage('login')}
+                <Link 
+                  to="/login"
                   className="px-4 py-2 text-gray-700 hover:text-green-700 font-medium transition-colors duration-200"
                 >
                   {t.nav.login}
-                </button>
-                <button 
-                  onClick={() => setCurrentPage('signup')}
+                </Link>
+                <Link 
+                  to="/signup"
                   className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-md transition-all duration-200"
                 >
                   {t.nav.signup}
-                </button>
+                </Link>
               </div>
             )}
 
@@ -365,12 +405,9 @@ const Navbar = ({
               {navItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => {
-                    setCurrentPage(item.id);
-                    setIsMenuOpen(false);
-                  }}
+                  onClick={() => handleNavClick(item.path)}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
-                    currentPage === item.id
+                    isActivePath(item.path)
                       ? 'bg-green-100 text-green-700'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
@@ -384,20 +421,14 @@ const Navbar = ({
               {!user && (
                 <div className="border-t border-gray-200 pt-4 space-y-2">
                   <button 
-                    onClick={() => {
-                      setCurrentPage('login');
-                      setIsMenuOpen(false);
-                    }}
+                    onClick={() => handleNavClick('/login')}
                     className="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
                   >
                     <HiUser className="w-5 h-5" />
                     <span className="font-medium">{t.nav.login}</span>
                   </button>
                   <button 
-                    onClick={() => {
-                      setCurrentPage('signup');
-                      setIsMenuOpen(false);
-                    }}
+                    onClick={() => handleNavClick('/signup')}
                     className="w-full flex items-center space-x-3 px-4 py-3 bg-green-600 text-white rounded-lg shadow-md transition-colors duration-200"
                   >
                     <HiUserCircle className="w-5 h-5" />

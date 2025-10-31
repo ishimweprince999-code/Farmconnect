@@ -266,9 +266,9 @@ const Home = ({ products, markets, onPageChange, language = 'en' }) => {
   // Customizable hero section settings
   const heroSettings = {
     backgroundImage: 'https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-    height: '85vh', // Customizable height - not too big, not too small
-    minHeight: '600px', // Minimum height to ensure good visibility
-    maxHeight: '800px', // Maximum height to prevent being too tall
+    height: '95vh',
+    minHeight: '600px',
+    maxHeight: '800px',
     overlay: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.2) 100%)',
     textShadow: '0 2px 4px rgba(0,0,0,0.5)',
     imageFilters: {
@@ -281,7 +281,7 @@ const Home = ({ products, markets, onPageChange, language = 'en' }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       
-      {/* Hero Section with Customizable Background Image */}
+      {/* Hero Section with Full Background Image Coverage */}
       <section 
         className="relative flex items-center justify-center overflow-hidden"
         style={{
@@ -291,12 +291,15 @@ const Home = ({ products, markets, onPageChange, language = 'en' }) => {
         }}
       >
         
-        {/* Background Image Container */}
-        <div className="absolute inset-0 overflow-hidden">
+        {/* Background Image Container - FIXED FOR FULL COVERAGE */}
+        <div className="absolute inset-0">
           <div 
-            className="w-full h-full bg-cover bg-center bg-no-repeat"
+            className="w-full h-full"
             style={{
               backgroundImage: `url('${heroSettings.backgroundImage}')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
               filter: `brightness(${heroSettings.imageFilters.brightness}) contrast(${heroSettings.imageFilters.contrast}) saturate(${heroSettings.imageFilters.saturation})`
             }}
           >
@@ -359,12 +362,7 @@ const Home = ({ products, markets, onPageChange, language = 'en' }) => {
                   placeholder={t.hero.searchPlaceholder}
                   className="w-full pl-12 pr-32 py-4 text-gray-900 rounded-2xl border-0 shadow-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-lg bg-white/95"
                 />
-                <button 
-                  type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-xl font-semibold transition-colors"
-                >
-                  Search
-                </button>
+               
               </div>
             </form>
 
@@ -391,13 +389,12 @@ const Home = ({ products, markets, onPageChange, language = 'en' }) => {
               <div className="w-8 h-12 border-2 border-green-300 rounded-full flex justify-center mx-auto">
                 <div className="w-1.5 h-3 bg-green-400 rounded-full mt-3 animate-pulse"></div>
               </div>
-              <p className="text-green-200 text-sm mt-2">Scroll to explore</p>
+            
             </div>
           </div>
         </div>
       </section>
 
-      {/* Rest of the sections remain exactly the same */}
       {/* Stats Section */}
       <section className="py-16 bg-white relative">
         <div className="container mx-auto px-4">
